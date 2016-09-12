@@ -59,14 +59,14 @@ private func setValue(_ value: AnyObject, forKeyPathComponents components: Array
 		let tail = components.dropFirst()
 		setValue(value, forKeyPathComponents: tail, dictionary: &child!)
 
-		dictionary[String(head)] = child
+		dictionary[String(head)] = child as AnyObject?
 	}
 }
 
 internal final class ToJSON {
 	
 	class func basicType<N>(_ field: N, map: Map) {
-		if let x = field as? AnyObject where false
+		if let x = field as? AnyObject , false
 			|| x is NSNumber // Basic types
 			|| x is Bool
 			|| x is Int
@@ -163,7 +163,7 @@ internal final class ToJSON {
 	class func objectDictionaryOfArrays<N: Mappable>(_ field: Dictionary<String, [N]>, map: Map) {
 		let JSONObjects = Mapper(context: map.context).toJSONDictionaryOfArrays(field)
 
-		setValue(JSONObjects, map: map)
+		setValue(JSONObjects as AnyObject, map: map)
 	}
 	
 	class func optionalObjectDictionaryOfArrays<N: Mappable>(_ field: Dictionary<String, [N]>?, map: Map) {

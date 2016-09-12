@@ -339,7 +339,7 @@ extension Mapper {
     public func toJSONString(_ array: [N], prettyPrint: Bool = false) -> String? {
         let JSONDict = toJSONArray(array)
         
-        return Mapper.toJSONString(JSONDict, prettyPrint: prettyPrint)
+        return Mapper.toJSONString(JSONDict as AnyObject, prettyPrint: prettyPrint)
     }
 	
 	/// Converts an Object to a JSON string with option of pretty formatting
