@@ -50,13 +50,13 @@ class CustomTransformTests: XCTestCase {
 		transforms.dateOpt = Date(timeIntervalSince1970: 946684912)
 		
 		let JSON = mapper.toJSON(transforms)
-		let parsedTransforms = mapper.map(JSON)
+		let parsedTransforms = mapper.map(JSON: JSON)
 		XCTAssertNotNil(parsedTransforms)
 		XCTAssertEqual(parsedTransforms?.date, transforms.date)
 		XCTAssertEqual(parsedTransforms?.dateOpt, transforms.dateOpt)
 		
 		let JSONDateString: [String: Any] = ["date": "946684800", "dateOpt": "946684912"]
-		let parsedTransformsDateString = mapper.map(JSONDateString)
+		let parsedTransformsDateString = mapper.map(JSON: JSONDateString)
 		
 		XCTAssertNotNil(parsedTransformsDateString)
 		XCTAssertEqual(parsedTransforms?.date, parsedTransformsDateString?.date)
@@ -70,7 +70,7 @@ class CustomTransformTests: XCTestCase {
 		transforms.ISO8601DateOpt = Date(timeIntervalSince1970: 1398956159)
 		let JSON = mapper.toJSON(transforms)
 
-		let parsedTransforms = mapper.map(JSON)
+		let parsedTransforms = mapper.map(JSON: JSON)
 		XCTAssertNotNil(parsedTransforms)
 		XCTAssertEqual(parsedTransforms?.ISO8601Date, transforms.ISO8601Date)
 		XCTAssertEqual(parsedTransforms?.ISO8601DateOpt, transforms.ISO8601DateOpt)
@@ -78,13 +78,13 @@ class CustomTransformTests: XCTestCase {
 	
 	func testISO8601DateTransformWithInvalidInput() {
 		var JSON: [String: Any] = ["ISO8601Date": ""]
-		let transforms = mapper.map(JSON)
+		let transforms = mapper.map(JSON: JSON)
 
 		XCTAssertNil(transforms?.ISO8601DateOpt)
 
 		JSON["ISO8601Date"] = "incorrect format"
 
-		let transforms2 = mapper.map(JSON)
+		let transforms2 = mapper.map(JSON: JSON)
 
 		XCTAssertNil(transforms2?.ISO8601DateOpt)
 	}
@@ -92,7 +92,7 @@ class CustomTransformTests: XCTestCase {
 	func testCustomFormatDateTransform(){
 		let dateString = "2015-03-03T02:36:44"
 		let JSON: [String: Any] = ["customFormateDate": dateString]
-		let transform: Transforms! = mapper.map(JSON)
+		let transform: Transforms! = mapper.map(JSON: JSON)
 		XCTAssertNotNil(transform)
 		
 		let JSONOutput = mapper.toJSON(transform)
@@ -103,7 +103,7 @@ class CustomTransformTests: XCTestCase {
 	func testIntToStringTransformOf() {
 		let intValue = 12345
 		let JSON: [String: Any] = ["intWithString": "\(intValue)"]
-		let transforms = mapper.map(JSON)
+		let transforms = mapper.map(JSON: JSON)
 
 		XCTAssertEqual(transforms?.intWithString, intValue)
 	}
@@ -114,7 +114,7 @@ class CustomTransformTests: XCTestCase {
 		
 		let JSON = mapper.toJSON(transforms)
 
-		let parsedTransforms = mapper.map(JSON)
+		let parsedTransforms = mapper.map(JSON: JSON)
 		XCTAssertNotNil(parsedTransforms)
 		XCTAssertEqual(parsedTransforms?.int64Value, transforms.int64Value)
 	}
@@ -122,13 +122,13 @@ class CustomTransformTests: XCTestCase {
 	func testURLTranform() {
 		let transforms = Transforms()
 
-		transforms.URL = NSURL(string: "http://google.com/image/1234")!
-		transforms.URLOpt = NSURL(string: "http://google.com/image/1234")
-		transforms.URLWithoutEncoding = NSURL(string: "http://google.com/image/1234#fragment")!
+		transforms.URL = URL(string: "http://google.com/image/1234")!
+		transforms.URLOpt = URL(string: "http://google.com/image/1234")
+		transforms.URLWithoutEncoding = URL(string: "http://google.com/image/1234#fragment")!
 		
 		let JSON = mapper.toJSON(transforms)
 
-		let parsedTransforms = mapper.map(JSON)
+		let parsedTransforms = mapper.map(JSON: JSON)
 		
 		XCTAssertNotNil(parsedTransforms)
 		XCTAssertEqual(parsedTransforms?.URL, transforms.URL)
@@ -138,7 +138,7 @@ class CustomTransformTests: XCTestCase {
 	
 	func testEnumTransform() {
 		let JSON: [String: Any] = ["firstImageType": "cover", "secondImageType": "thumbnail"]
-		let transforms = mapper.map(JSON)
+		let transforms = mapper.map(JSON: JSON)
 
 		let imageType = Transforms.ImageType.self
 		XCTAssertEqual(transforms?.firstImageType, imageType.Cover)
@@ -162,9 +162,9 @@ class Transforms: Mappable {
 	var customFormatDate = Date()
 	var customFormatDateOpt: Date?
 	
-	var URL = NSURL()
-	var URLOpt: NSURL?
-	var URLWithoutEncoding = NSURL()
+	var URL = Foundation.URL(string: "")
+	var URLOpt: Foundation.URL?
+	var URLWithoutEncoding = Foundation.URL(string: "")
 	
 	var intWithString: Int = 0
 	
@@ -177,11 +177,11 @@ class Transforms: Mappable {
 		
 	}
 	
-	required init?(_ map: Map){
+	required init?(map: Map){
 		
 	}
 	
-	func mapping(_ map: Map) {
+	func mapping(map: Map) {
 		date				<- (map["date"], DateTransform())
 		dateOpt				<- (map["dateOpt"], DateTransform())
 		

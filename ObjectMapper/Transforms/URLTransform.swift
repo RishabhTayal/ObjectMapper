@@ -43,18 +43,17 @@ open class URLTransform: TransformType {
 		self.shouldEncodeURLString = shouldEncodeURLString
 	}
 
-	public func transformFromJSON(value: AnyObject?) -> NSURL? {
+	public func transformFromJSON(_ value: Any?) -> URL? {
 		guard let URLString = value as? String else { return nil }
 		
 		if !shouldEncodeURLString {
-			return NSURL(string: URLString)
+			return URL(string: URLString)
 		}
-
-		guard let escapedURLString = URLString.stringByAddingPercentEncodingWithAllowedCharacters(
-			NSCharacterSet.URLQueryAllowedCharacterSet()) else {
+		
+		guard let escapedURLString = URLString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) else {
 			return nil
 		}
-		return NSURL(string: escapedURLString)
+		return URL(string: escapedURLString)
 	}
 
 	public func transformToJSON(_ value: URL?) -> String? {
